@@ -7,14 +7,14 @@ public class HTTPTest : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI t;
     // Start is called before the first frame update
-    public void ConnectStart()//ボタン操作時に呼ばれる
+    public virtual void ConnectStart()//ボタン操作時に呼ばれる
     {
-        StartCoroutine("GetResponce");//コルーチン開始
+        StartCoroutine(Connect(""));//コルーチン開始
     }
 
-    IEnumerator GetResponce()//HTTPで文字列をもらってくる
+    IEnumerator Connect(string url)//HTTPで文字列をもらってくる
     {
-        UnityWebRequest www = UnityWebRequest.Get("localhost/");//サーバー（今回はローカル）に接続
+        UnityWebRequest www = UnityWebRequest.Get("localhost/"+url);//サーバー（今回はローカル）に接続
         yield return www.SendWebRequest();//結果が出るまで待機
 
         if (www.result != UnityWebRequest.Result.Success)//200じゃなかったら
