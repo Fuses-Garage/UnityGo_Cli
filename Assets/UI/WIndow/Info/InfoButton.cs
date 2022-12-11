@@ -13,19 +13,22 @@ public class InfoButton : MonoBehaviour
 
     IEnumerator Connect()//HTTPで文字列をもらってくる
     {
-        UnityWebRequest www = UnityWebRequest.Get("localhost/getinfo");//サーバー（今回はローカル）に接続
-        yield return www.SendWebRequest();//結果が出るまで待機
+        using (UnityWebRequest www = UnityWebRequest.Get("127.0.0.1/getinfo"))
+        {//サーバー（今回はローカル）に接続
+            www.timeout = 3;
+            yield return www.SendWebRequest();//結果が出るまで待機
 
-        if (www.result != UnityWebRequest.Result.Success)//200じゃなかったら
-        {
-            Debug.Log(www.error);//エラーを表示する
-        }
-        else//200なら
-        {
-            
-            var wrapper = JsonUtility.FromJson<OshiraseWrapper>("{\"osrs\":"+www.downloadHandler.text+"}");//JSONをラッパーに
-            var go=Instantiate(window);//ウィンドウ生成
-            go.GetComponent<InfoWindow>().InfoAdd(wrapper.osrs);//ウィンドウに渡す
+            if (www.result != UnityWebRequest.Result.Success)//200じゃなかったら
+            {
+                Debug.Log(www.error);//エラーを表示する
+            }
+            else//200なら
+            {
+
+                var wrapper = JsonUtility.FromJson<OshiraseWrapper>("{\"osrs\":" + www.downloadHandler.text + "}");//JSONをラッパーに
+                var go = Instantiate(window);//ウィンドウ生成
+                go.GetComponent<InfoWindow>().InfoAdd(wrapper.osrs);//ウィンドウに渡す
+            }
         }
     }
 }

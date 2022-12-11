@@ -4,10 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class InfoSerializer : MonoBehaviour//Info初期化用スクリプト
 {
-    //内容を表示するText
-    [SerializeField] Text title;
-    [SerializeField] Text about;
-    [SerializeField] Text date;
+    [SerializeField] Text title; //タイトルを表示するText
+    [SerializeField] Text about; //内容を表示するText
+    [SerializeField] Text date;  //作成日を表示するText
     public void OshiraseSerialize(OshiraseData o)
     {
         //Dataの内容を代入

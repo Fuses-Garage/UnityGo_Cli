@@ -1,7 +1,7 @@
 
 
 [System.Serializable]
-public class OshiraseData
+public class OshiraseData//お知らせデータ
 {
     public int ID;
     public string TITLE;
@@ -9,9 +9,8 @@ public class OshiraseData
     public string DATE;
 }
 [System.Serializable]
-class OshiraseWrapper:object
+class OshiraseWrapper:object//ラッパークラス
 {
-    // 商品のインスタンス（配列）をインスペクターに表示させます。productは、Product型のフィールドになります。
-    public OshiraseData[] osrs;
+    public OshiraseData[] osrs;//お知らせデータの配列
 }
 
