@@ -14,16 +14,18 @@ public class HTTPTest : MonoBehaviour
 
     IEnumerator Connect(string url)//HTTPで文字列をもらってくる
     {
-        UnityWebRequest www = UnityWebRequest.Get("localhost/"+url);//サーバー（今回はローカル）に接続
-        yield return www.SendWebRequest();//結果が出るまで待機
+        using (UnityWebRequest www = UnityWebRequest.Get("127.0.0.1/" + url))
+        {//サーバー（今回はローカル）に接続
+            yield return www.SendWebRequest();//結果が出るまで待機
 
-        if (www.result != UnityWebRequest.Result.Success)//200じゃなかったら
-        {
-            Debug.Log(www.error);//エラーを表示する
-        }
-        else//200なら
-        {
-            t.text = www.downloadHandler.text;//文字列表示
+            if (www.result != UnityWebRequest.Result.Success)//200じゃなかったら
+            {
+                Debug.Log(www.error);//エラーを表示する
+            }
+            else//200なら
+            {
+                t.text = www.downloadHandler.text;//文字列表示
+            }
         }
     }
 }
