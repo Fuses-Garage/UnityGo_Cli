@@ -9,7 +9,7 @@ public class HTTPTest : MonoBehaviour
     // Start is called before the first frame update
     public virtual void ConnectStart()//ボタン操作時に呼ばれる
     {
-        StartCoroutine(Connect(""));//コルーチン開始
+        StartCoroutine(Connect("retpubkey"));//コルーチン開始
     }
 
     IEnumerator Connect(string url)//HTTPで文字列をもらってくる
