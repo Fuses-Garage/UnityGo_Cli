@@ -3096,6 +3096,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1818123032}
+  - component: {fileID: 1818123037}
   - component: {fileID: 1818123036}
   - component: {fileID: 1818123035}
   - component: {fileID: 1818123034}
@@ -3172,8 +3173,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1818123036}
-        m_TargetAssemblyTypeName: Login_Basic, Assembly-CSharp
+      - m_Target: {fileID: 1818123037}
+        m_TargetAssemblyTypeName: LoginChap, Assembly-CSharp
         m_MethodName: Submit
         m_Mode: 1
         m_Arguments:
@@ -3232,6 +3233,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c16b203fc3318647a59fdb70245466c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: {fileID: 481113736}
+  pass: {fileID: 302085664}
+  Window: {fileID: 598354519459467816, guid: 543c2f122a8c7a94499f592c60007f33, type: 3}
+--- !u!114 &1818123037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1818123031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 541332b9a66463f438ace75c211a43ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   id: {fileID: 481113736}

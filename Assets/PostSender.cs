@@ -43,6 +43,32 @@ public static class PostSender//POSTリクエスト用クラス
             }
         }
     }
+    public static IEnumerator Get(string url,UnityAction<string> s)//送信処理
+    {
 
+        WWWForm form = new WWWForm();//newで生成
+        using (UnityWebRequest www = UnityWebRequest.Get("127.0.0.1/" + url))
+        {//リクエスト生成
+            Debug.Log("Request Send to " + "localhost/" + url);
+            www.timeout = 3;
+            yield return www.Send();//送信
+            Debug.Log(www.downloadHandler.text);
+            Debug.Log("Request Return");
+            if (www.result == UnityWebRequest.Result.ProtocolError)
+            {
+                // レスポンスコードを見て処理
+                s.Invoke($"[Error]Response Code : {www.responseCode}");
+            }
+            else if (www.result == UnityWebRequest.Result.ConnectionError)
+            {
+                // エラーメッセージを見て処理
+                s.Invoke($"[Error]Message : {www.error}");
+            }
+            else
+            {
+                s.Invoke(www.downloadHandler.text);
+            }
+        }
+    }
 }
 

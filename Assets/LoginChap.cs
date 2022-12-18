@@ -2,26 +2,53 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class LoginBasic : MonoBehaviour
-{
-    [SerializeField] InputField id;//ƒ†[ƒUID“ü—ÍƒtƒH[ƒ€
-    [SerializeField] InputField pass;//ƒpƒXƒ[ƒh“ü—ÍƒtƒH[ƒ€
-    [SerializeField] GameObject Window;//ƒƒbƒZ[ƒWƒEƒBƒ“ƒhƒE‚ÌƒvƒŒƒnƒu
-    public void Submit()//“ü—ÍŠm’è
+using System.Security.Cryptography;
+using System.Text;
+public class LoginChap : MonoBehaviour
+{ 
+    [SerializeField] InputField id;//ãƒ¦ãƒ¼ã‚¶IDå…¥åŠ›ãƒ•ã‚©ãƒ¼ãƒ 
+    [SerializeField] InputField pass;//ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å…¥åŠ›ãƒ•ã‚©ãƒ¼ãƒ 
+    [SerializeField] GameObject Window;//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ—ãƒ¬ãƒãƒ–
+    public void Submit()//å…¥åŠ›ç¢ºå®š
     {
-        PostParam[] param = { new PostParam("loginname", id.text), new PostParam("pass", pass.text) };
-        StartCoroutine(PostSender.Upload(param,"login_basic",EndProcess));//ƒRƒ‹[ƒ`ƒ“ŠJn
+
+        PostParam[] param = {null};
+        StartCoroutine(PostSender.Get("getchallenge",SendChallenge));//ã‚³ãƒ«ãƒ¼ãƒãƒ³é–‹å§‹
     }
-    void EndProcess(string mes)//ˆ—‚ªI‚í‚Á‚½‚ç
+    public void SendChallenge(string chl){
+        Debug.Log(chl);
+        var challenge = JsonUtility.FromJson<ChallengeData>(chl);//JSONã‚’ãƒ‘ãƒ¼ã‚¹
+        var csp = new SHA256CryptoServiceProvider();
+        var targetBytes = Encoding.UTF8.GetBytes(pass.text);
+        var hashBytes = csp.ComputeHash(targetBytes);
+        var hashStr = new StringBuilder();
+        foreach (var hashByte in hashBytes) {
+            hashStr.Append(hashByte.ToString("x2"));
+        }
+        targetBytes = Encoding.UTF8.GetBytes(hashStr.ToString()+challenge.chl);
+        hashBytes = csp.ComputeHash(targetBytes);
+        hashStr = new StringBuilder();
+        foreach (var hashByte in hashBytes) {
+            hashStr.Append(hashByte.ToString("x2"));
+        }
+        PostParam[] param = { new PostParam("loginname", id.text), new PostParam("pass", hashStr.ToString()),new PostParam("code",challenge.code) };
+        StartCoroutine(PostSender.Upload(param,"login_chap",EndProcess));//ã‚³ãƒ«ãƒ¼ãƒãƒ³é–‹å§‹
+    }
+    void EndProcess(string mes)//å‡¦ç†ãŒçµ‚ã‚ã£ãŸã‚‰
     {
-        GameObject go = Instantiate(Window, this.transform.parent.parent);//ƒEƒBƒ“ƒhƒE¶¬
-        if (mes == "success")//³í‚ÉI—¹‚·‚ê‚Î
+        GameObject go = Instantiate(Window, this.transform.parent.parent);//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”Ÿæˆ
+        if (mes == "success")//æ­£å¸¸ã«çµ‚äº†ã™ã‚Œã°
         {
-            go.GetComponent<MessageSerializer>().SetType(0, "ƒƒOƒCƒ“‚É¬Œ÷‚µ‚Ü‚µ‚½I");//¬Œ÷
+            go.GetComponent<MessageSerializer>().SetType(0, "ãƒ­ã‚°ã‚¤ãƒ³ã«æˆåŠŸã—ã¾ã—ãŸï¼");//æˆåŠŸ
         }
-        else//ƒGƒ‰[‚È‚ç
+        else//ã‚¨ãƒ©ãƒ¼ãªã‚‰
         {
-            go.GetComponent<MessageSerializer>().SetType(2, mes);//ƒGƒ‰[ƒƒbƒZ[ƒWo—Í
+            go.GetComponent<MessageSerializer>().SetType(2, mes);//ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡ºåŠ›
         }
     }
+}
+[System.Serializable]
+public class ChallengeData{
+    public string code;
+    public string chl;
 }
