@@ -4,46 +4,53 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Security.Cryptography;
 using System.Text;
+using UnityEngine.SceneManagement;
 public class LoginChap : MonoBehaviour
 { 
-    [SerializeField] InputField id;//ãƒ¦ãƒ¼ã‚¶IDå…¥åŠ›ãƒ•ã‚©ãƒ¼ãƒ 
-    [SerializeField] InputField pass;//ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å…¥åŠ›ãƒ•ã‚©ãƒ¼ãƒ 
-    [SerializeField] GameObject Window;//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒ—ãƒ¬ãƒãƒ–
-    public void Submit()//å…¥åŠ›ç¢ºå®š
+    [SerializeField] InputField id;//ƒ†[ƒUID“ü—ÍƒtƒH[ƒ€
+    [SerializeField] InputField pass;//ƒpƒXƒ[ƒh“ü—ÍƒtƒH[ƒ€
+    [SerializeField] GameObject Window;//ƒƒbƒZ[ƒWƒEƒBƒ“ƒhƒE‚ÌƒvƒŒƒnƒu
+    public void Submit()//“ü—ÍŠm’è
     {
-
+        if(id.text==""||pass.text==""){
+            EndProcess("‘S‚Ä‚ÌƒeƒLƒXƒgƒ{ƒbƒNƒX‚É’l‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢B");
+            return;
+        }
         PostParam[] param = {null};
-        StartCoroutine(PostSender.Get("getchallenge",SendChallenge));//ã‚³ãƒ«ãƒ¼ãƒãƒ³é–‹å§‹
+        StartCoroutine(PostSender.Get("getchallenge",SendChallenge));//ƒRƒ‹[ƒ`ƒ“ŠJn
     }
-    public void SendChallenge(string chl){
+    public void SendChallenge(string chl){//ƒ`ƒƒƒŒƒ“ƒW‚ğó‚¯æ‚Á‚½‚ç
         Debug.Log(chl);
-        var challenge = JsonUtility.FromJson<ChallengeData>(chl);//JSONã‚’ãƒ‘ãƒ¼ã‚¹
-        var csp = new SHA256CryptoServiceProvider();
-        var targetBytes = Encoding.UTF8.GetBytes(pass.text);
-        var hashBytes = csp.ComputeHash(targetBytes);
+        var challenge = JsonUtility.FromJson<ChallengeData>(chl);//JSON‚ğƒp[ƒX
+        var csp = new SHA256CryptoServiceProvider();//ƒnƒbƒVƒ…‰»—pƒNƒ‰ƒX
+        var targetBytes = Encoding.UTF8.GetBytes(pass.text);//ƒoƒCƒgƒR[ƒh‚É•ÏŠ·
+        var hashBytes = csp.ComputeHash(targetBytes);//ƒnƒbƒVƒ…‰»
         var hashStr = new StringBuilder();
         foreach (var hashByte in hashBytes) {
-            hashStr.Append(hashByte.ToString("x2"));
+            hashStr.Append(hashByte.ToString("x2"));//String‚É•ÏŠ·‚µ‚Ä‚¢‚­
         }
-        targetBytes = Encoding.UTF8.GetBytes(hashStr.ToString()+challenge.chl);
-        hashBytes = csp.ComputeHash(targetBytes);
+        targetBytes = Encoding.UTF8.GetBytes(hashStr.ToString()+challenge.chl);//ƒ`ƒƒƒŒƒ“ƒW‚Æ‚­‚Á•t‚¯‚Ä‚Ü‚½ƒoƒCƒgƒR[ƒh‰»
+        hashBytes = csp.ComputeHash(targetBytes);//‚Ü‚½ƒnƒbƒVƒ…‰»
         hashStr = new StringBuilder();
         foreach (var hashByte in hashBytes) {
-            hashStr.Append(hashByte.ToString("x2"));
+            hashStr.Append(hashByte.ToString("x2"));//‚Ü‚½String‰»
         }
-        PostParam[] param = { new PostParam("loginname", id.text), new PostParam("pass", hashStr.ToString()),new PostParam("code",challenge.code) };
-        StartCoroutine(PostSender.Upload(param,"login_chap",EndProcess));//ã‚³ãƒ«ãƒ¼ãƒãƒ³é–‹å§‹
+        PostParam[] param = { new PostParam("loginname", id.text), new PostParam("pass", hashStr.ToString()),new PostParam("code",challenge.code) };//ƒ`ƒƒƒŒƒ“ƒW‚Ì¯•Êq‚Æ‚Æ‚à‚É‘—‚è•t‚¯‚é
+        StartCoroutine(PostSender.Upload(param,"login_chap",EndProcess));//ƒRƒ‹[ƒ`ƒ“ŠJn
     }
-    void EndProcess(string mes)//å‡¦ç†ãŒçµ‚ã‚ã£ãŸã‚‰
+    void EndProcess(string mes)//ˆ—‚ªI‚í‚Á‚½‚ç
     {
-        GameObject go = Instantiate(Window, this.transform.parent.parent);//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”Ÿæˆ
-        if (mes == "success")//æ­£å¸¸ã«çµ‚äº†ã™ã‚Œã°
+        var meses=mes.Split(" ");
+        GameObject go = Instantiate(Window, this.transform.parent.parent);//ƒEƒBƒ“ƒhƒE¶¬
+        if (meses[0] == "success")//³í‚ÉI—¹‚·‚ê‚Î
         {
-            go.GetComponent<MessageSerializer>().SetType(0, "ãƒ­ã‚°ã‚¤ãƒ³ã«æˆåŠŸã—ã¾ã—ãŸï¼");//æˆåŠŸ
+            PlayerPrefs.SetString("SID",meses[1]);
+            PlayerPrefs.SetString("loginname",id.text);
+            SceneManager.LoadScene(0);//ƒQ[ƒ€ƒV[ƒ“‚É‘JˆÚ
         }
-        else//ã‚¨ãƒ©ãƒ¼ãªã‚‰
+        else//ƒGƒ‰[‚È‚ç
         {
-            go.GetComponent<MessageSerializer>().SetType(2, mes);//ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å‡ºåŠ›
+            go.GetComponent<MessageSerializer>().SetType(2, mes);//ƒGƒ‰[ƒƒbƒZ[ƒWo—Í
         }
     }
 }
